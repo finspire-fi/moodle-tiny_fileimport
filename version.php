@@ -26,5 +26,6 @@
 defined('MOODLE_INTERNAL') || die();
 
 $plugin->version   = 2026032020;
+$plugin->release   = '0.0.1';
 $plugin->requires  = 2025092600;
 $plugin->component = 'tiny_fileimport';
