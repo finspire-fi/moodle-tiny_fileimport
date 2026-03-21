@@ -53,7 +53,16 @@ const uploadAndInsert = async(editor, files) => {
             const url = await uploadFile(editor, pickerType, file, file.name, () => {});
             uploadedFiles.push({name: file.name, url});
         } catch (error) {
-            Notification.exception(error);
+            // Check if error is due to unsupported file type
+            if (error.errorcode === 'invalidfiletype' || error.errorcode === '191') {
+                const message = await getString('filetypenotsupported_desc', component, escapeHtml(file.name));
+                Notification.alert(
+                    await getString('filetypenotsupported', component),
+                    message
+                );
+            } else {
+                Notification.exception(error);
+            }
         }
     }
 

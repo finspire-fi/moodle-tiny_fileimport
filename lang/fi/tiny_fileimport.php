@@ -30,5 +30,7 @@ $string['allowalltypes'] = 'Salli kaikki tiedostotyypit';
 $string['allowalltypes_desc'] = 'Jos käytössä, latauksia ei rajoiteta sivuston hallinnon > Palvelin > Tiedostotyypit -osiossa lueteltuihin tiedostotyyppeihin. Jos poistettu käytöstä, kaikki siellä luetellut tiedostotyypit sallitaan oletuksena.';
 $string['allowedextensionsoverride'] = 'Sallittujen tiedostopäätteiden ohitus';
 $string['allowedextensionsoverride_desc'] = 'Valinnainen. Pilkulla, välilyönnillä tai rivinvaihdolla erotettu luettelo sallituista tiedostopäätteistä (esimerkiksi: pdf, docx, xlsx, zip). Jos tyhjä, lisäosa käyttää täydellistä luetteloa sivuston hallinnosta > Palvelin > Tiedostotyypit. Ohitetaan, kun "Salli kaikki tiedostotyypit" on käytössä.';
+$string['filetypenotsupported'] = 'Tiedostotyyppi ei ole tuettu';
+$string['filetypenotsupported_desc'] = 'Tiedostoa "{$a}" ei voitu ladata, koska sen tiedostotyyppi ei ole tuettu nykyisten asetusten mukaan.';
 $string['tiny/fileimport:use'] = 'Käytä Tiny-tiedostojen tuontia';
 $string['privacy:metadata'] = 'Tiny-tiedostojen tuonti -lisäosa ei tallenna henkilötietoja.';
