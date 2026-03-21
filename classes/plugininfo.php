@@ -66,11 +66,72 @@ class plugininfo extends plugin implements plugin_with_menuitems, plugin_with_co
             }
         }
 
+        $allowalltypes = (bool) get_config('tiny_fileimport', 'allowalltypes');
+        $overrideextensions = self::get_configured_allowed_extensions_override();
+        $acceptedtypes = ['*'];
+
+        if (!$allowalltypes) {
+            if (!empty($overrideextensions)) {
+                $acceptedtypes = $overrideextensions;
+            } else {
+                $acceptedtypes = self::get_all_filetypes_from_admin_list();
+            }
+        }
+
         return [
             'permissions' => [
                 'upload' => true,
             ],
             'pickerType' => $pickertype,
+            'acceptedTypes' => $acceptedtypes,
         ];
+    }
+
+    /**
+     * Get all configured file extensions from the same source used by admin/tool/filetypes.
+     *
+     * @return array
+     */
+    protected static function get_all_filetypes_from_admin_list(): array {
+        if (!function_exists('get_mimetypes_array')) {
+            return ['*'];
+        }
+
+        $extensions = array_keys(get_mimetypes_array());
+        $extensions = array_filter($extensions, static function(string $extension): bool {
+            return (bool) preg_match('/^[a-z0-9]+$/i', $extension);
+        });
+
+        return array_values(array_map(static function(string $extension): string {
+            return '.' . strtolower($extension);
+        }, $extensions));
+    }
+
+    /**
+     * Get configured allowed extension override from admin setting.
+     *
+     * @return array
+     */
+    protected static function get_configured_allowed_extensions_override(): array {
+        $raw = (string) get_config('tiny_fileimport', 'allowedextensionsoverride');
+        if ($raw === '') {
+            return [];
+        }
+
+        $tokens = preg_split('/[\s,;]+/', $raw) ?: [];
+        $tokens = array_filter($tokens, static function(string $value): bool {
+            return $value !== '';
+        });
+
+        $extensions = array_map(static function(string $value): string {
+            $normalized = ltrim(strtolower(trim($value)), '.');
+            return '.' . $normalized;
+        }, $tokens);
+
+        $extensions = array_filter($extensions, static function(string $extension): bool {
+            return (bool) preg_match('/^\.[a-z0-9]+$/', $extension);
+        });
+
+        return array_values(array_unique($extensions));
     }
 }

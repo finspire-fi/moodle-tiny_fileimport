@@ -15,7 +15,7 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * Tiny fileimport plugin version details.
+ * Admin settings for the Tiny file import plugin.
  *
  * @package    tiny_fileimport
  * @copyright  2026
@@ -24,6 +24,19 @@
 
 defined('MOODLE_INTERNAL') || die();
 
-$plugin->version   = 2026032018;
-$plugin->requires  = 2025092600;
-$plugin->component = 'tiny_fileimport';
+if ($ADMIN->fulltree) {
+    $settings->add(new admin_setting_configcheckbox(
+        'tiny_fileimport/allowalltypes',
+        get_string('allowalltypes', 'tiny_fileimport'),
+        get_string('allowalltypes_desc', 'tiny_fileimport'),
+        0
+    ));
+
+    $settings->add(new admin_setting_configtextarea(
+        'tiny_fileimport/allowedextensionsoverride',
+        get_string('allowedextensionsoverride', 'tiny_fileimport'),
+        get_string('allowedextensionsoverride_desc', 'tiny_fileimport'),
+        '',
+        PARAM_RAW_TRIMMED
+    ));
+}

@@ -12,7 +12,9 @@ import Notification from 'core/notification';
 import {getString} from 'core/str';
 import uploadFile from 'editor_tiny/uploader';
 import {component} from './common';
-import {getPermissions, getPickerTypeForFile} from './options';
+import {getPermissions, getPickerTypeForFile, getAcceptedTypes} from './options';
+
+const FILEPICKERS_OPTION_NAME = 'moodle:filepickers';
 
 const escapeHtml = (value) => {
     const div = document.createElement('div');
@@ -35,11 +37,19 @@ const uploadAndInsert = async(editor, files) => {
         return;
     }
 
+    const configuredAcceptedTypes = getAcceptedTypes(editor);
     const uploadedFiles = [];
 
     for (const file of files) {
         try {
             const pickerType = getPickerTypeForFile(editor, file);
+            const filepickers = editor.options.get(FILEPICKERS_OPTION_NAME) || {};
+
+            if (filepickers[pickerType] && configuredAcceptedTypes?.length) {
+                filepickers[pickerType].accepted_types = configuredAcceptedTypes;
+                editor.options.set(FILEPICKERS_OPTION_NAME, filepickers);
+            }
+
             const url = await uploadFile(editor, pickerType, file, file.name, () => {});
             uploadedFiles.push({name: file.name, url});
         } catch (error) {

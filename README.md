@@ -19,6 +19,8 @@ The plugin allows users to:
 - Automatic link insertion (`<a href="...">filename</a>`)
 - Per-file picker type selection based on `accepted_types`
   - Supports common patterns like `.pdf`, `*.pdf`, `application/*`, and `document`
+- Default allowed types come from the same source as **Site administration > Server > File types** (`admin/tool/filetypes`)
+- Admin checkbox to allow `*` (all file types)
 - Works with Moodle Tiny plugin architecture (`plugin_with_menuitems`, `plugin_with_configuration`)
 
 ---
@@ -120,6 +122,25 @@ php admin/cli/purge_caches.php
 
 ## Configuration & Behavior
 
+### Admin setting
+
+Navigate to plugin settings and configure:
+
+- `Allow all file types` (`tiny_fileimport/allowalltypes`)
+- `Allowed file extensions override` (`tiny_fileimport/allowedextensionsoverride`)
+
+Behavior:
+
+- If `Allow all file types` is enabled: plugin uses `*` (no extension restriction at plugin level)
+- Else if `Allowed file extensions override` is non-empty: plugin uses that override list
+- Else (default): plugin allows all file extensions currently listed in `admin/tool/filetypes`
+
+Override format:
+
+- Comma, space, or newline separated extensions
+- Examples: `pdf, docx, xlsx, zip` or one per line
+- Dot prefix is optional (`pdf` and `.pdf` are both accepted)
+
 ### Menu registration
 
 - JS menu item key: `fileimport`
@@ -143,6 +164,8 @@ Fallback order preference includes:
 
 This avoids common `invalidfiletype` errors when uploading PDFs through non-document pickers.
 
+Before each upload, the plugin applies the configured accepted types to the selected picker so server-side upload validation receives the intended `accepted_types[]` values.
+
 ---
 
 ## Testing Checklist
@@ -154,6 +177,8 @@ This avoids common `invalidfiletype` errors when uploading PDFs through non-docu
 - Drag & drop directly into editor uploads files
 - Uploaded links are inserted in content
 - PDF upload succeeds (no `invalidfiletype`)
+- Non-PDF types from `admin/tool/filetypes` (e.g. docx, xlsx, zip) upload successfully
+- When `Allow all file types` is enabled, uncommon extensions are accepted
 
 ---
 
@@ -182,7 +207,8 @@ Cause: selected picker doesn’t accept the file type.
 Fix:
 - Ensure latest plugin version is installed
 - Rebuild + upgrade + purge caches
-- Verify filepicker options on target form allow document uploads
+- Verify plugin setting `Allow all file types`
+- Verify target context/file area does not impose stricter `accepted_types`
 
 ### 4) Grunt fails with `Unable to find local grunt`
 

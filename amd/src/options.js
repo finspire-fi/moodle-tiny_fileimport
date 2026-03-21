@@ -11,6 +11,7 @@ import {pluginName} from './common';
 
 const permissionsName = getPluginOptionName(pluginName, 'permissions');
 const pickerTypeName = getPluginOptionName(pluginName, 'pickerType');
+const acceptedTypesName = getPluginOptionName(pluginName, 'acceptedTypes');
 
 export const register = (editor) => {
     const registerOption = editor.options.register;
@@ -25,6 +26,11 @@ export const register = (editor) => {
     registerOption(pickerTypeName, {
         processor: 'string',
         "default": 'file',
+    });
+
+    registerOption(acceptedTypesName, {
+        processor: 'array',
+        "default": [],
     });
 };
 
@@ -57,7 +63,7 @@ export const getPickerType = (editor) => {
     return configured;
 };
 
-const getAcceptedTypes = (picker) => {
+const getPickerAcceptedTypes = (picker) => {
     if (!picker || typeof picker !== 'object') {
         return [];
     }
@@ -119,14 +125,14 @@ export const getPickerTypeForFile = (editor, file) => {
 
     if (available && Object.prototype.hasOwnProperty.call(available, preferredType)) {
         const preferredPicker = available[preferredType];
-        if (fileMatchesAcceptedTypes(file, getAcceptedTypes(preferredPicker))) {
+        if (fileMatchesAcceptedTypes(file, getPickerAcceptedTypes(preferredPicker))) {
             return preferredType;
         }
     }
 
     if (available) {
         for (const [type, picker] of Object.entries(available)) {
-            if (fileMatchesAcceptedTypes(file, getAcceptedTypes(picker))) {
+            if (fileMatchesAcceptedTypes(file, getPickerAcceptedTypes(picker))) {
                 return type;
             }
         }
@@ -134,3 +140,5 @@ export const getPickerTypeForFile = (editor, file) => {
 
     return preferredType;
 };
+
+export const getAcceptedTypes = (editor) => editor.options.get(acceptedTypesName);
