@@ -12,9 +12,50 @@ import Notification from 'core/notification';
 import {getString} from 'core/str';
 import uploadFile from 'editor_tiny/uploader';
 import {component} from './common';
-import {getPermissions, getPickerTypeForFile, getAcceptedTypes} from './options';
+import {
+    getPermissions,
+    getPickerTypeForFile,
+    getAcceptedTypes,
+    getOverrideDefaultFileAttachmentFeature,
+} from './options';
 
 const FILEPICKERS_OPTION_NAME = 'moodle:filepickers';
+
+const NATIVE_IMAGE_TYPES_OPTION_NAME = 'images_file_types';
+
+const matchesNativeImageTypes = (editor, file) => {
+    const nativeImageTypes = String(editor.options.get(NATIVE_IMAGE_TYPES_OPTION_NAME) || '')
+        .split(',')
+        .map((value) => value.trim().toLowerCase())
+        .filter((value) => value !== '');
+
+    if (!nativeImageTypes.length) {
+        return true;
+    }
+
+    const extension = file.name.includes('.') ? file.name.split('.').pop().toLowerCase() : '';
+    return nativeImageTypes.includes(extension);
+};
+
+const canUseNativeEditorUpload = (editor, file) => {
+    if (!editor.options.get('automatic_uploads')) {
+        return false;
+    }
+
+    if (!String(file.type || '').toLowerCase().startsWith('image/')) {
+        return false;
+    }
+
+    return matchesNativeImageTypes(editor, file);
+};
+
+const shouldUsePluginDropHandling = (editor, files) => {
+    if (getOverrideDefaultFileAttachmentFeature(editor)) {
+        return true;
+    }
+
+    return files.some((file) => !canUseNativeEditorUpload(editor, file));
+};
 
 const escapeHtml = (value) => {
     const div = document.createElement('div');
@@ -110,19 +151,23 @@ export const displayDialog = async(editor) => {
 
 export const registerEditorDrop = (editor) => {
     editor.on('dragover', (event) => {
-        if (event?.dataTransfer?.files?.length) {
+        const files = Array.from(event?.dataTransfer?.files || []);
+
+        if (files.length && shouldUsePluginDropHandling(editor, files)) {
             event.preventDefault();
         }
     });
 
     editor.on('drop', async(event) => {
-        if (!event?.dataTransfer?.files?.length) {
+        const files = Array.from(event?.dataTransfer?.files || []);
+
+        if (!files.length || !shouldUsePluginDropHandling(editor, files)) {
             return;
         }
 
         event.preventDefault();
         event.stopPropagation();
-        await uploadAndInsert(editor, Array.from(event.dataTransfer.files));
+        await uploadAndInsert(editor, files);
     });
 };
 

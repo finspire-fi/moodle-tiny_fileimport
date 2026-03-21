@@ -32,6 +32,13 @@ if ($ADMIN->fulltree) {
         0
     ));
 
+    $settings->add(new admin_setting_configcheckbox(
+        'tiny_fileimport/overridedefaultfileattachmentfeature',
+        get_string('overridedefaultfileattachmentfeature', 'tiny_fileimport'),
+        get_string('overridedefaultfileattachmentfeature_desc', 'tiny_fileimport'),
+        0
+    ));
+
     $settings->add(new admin_setting_configtextarea(
         'tiny_fileimport/allowedextensionsoverride',
         get_string('allowedextensionsoverride', 'tiny_fileimport'),

@@ -127,6 +127,7 @@ php admin/cli/purge_caches.php
 Navigate to plugin settings and configure:
 
 - `Allow all file types` (`tiny_fileimport/allowalltypes`)
+- `Override default file attachment feature` (`tiny_fileimport/overridedefaultfileattachmentfeature`)
 - `Allowed file extensions override` (`tiny_fileimport/allowedextensionsoverride`)
 
 Behavior:
@@ -134,6 +135,8 @@ Behavior:
 - If `Allow all file types` is enabled: plugin uses `*` (no extension restriction at plugin level)
 - Else if `Allowed file extensions override` is non-empty: plugin uses that override list
 - Else (default): plugin allows all file extensions currently listed in `admin/tool/filetypes`
+- If `Override default file attachment feature` is enabled: direct editor drag-and-drop is always handled by this plugin
+- If `Override default file attachment feature` is disabled: Tiny keeps its native drag-and-drop upload behavior for files it supports, such as images, and this plugin takes over only for files the native editor upload flow does not handle
 
 Override format:
 
@@ -174,7 +177,8 @@ Before each upload, the plugin applies the configured accepted types to the sele
 - Clicking **File import** opens modal
 - Clicking dropzone opens file picker
 - Drag & drop into modal uploads files
-- Drag & drop directly into editor uploads files
+- Drag & drop directly into editor uploads files when override is enabled
+- Dragged images still use Tiny's native image upload when override is disabled
 - Uploaded links are inserted in content
 - PDF upload succeeds (no `invalidfiletype`)
 - Non-PDF types from `admin/tool/filetypes` (e.g. docx, xlsx, zip) upload successfully

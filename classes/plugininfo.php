@@ -84,6 +84,10 @@ class plugininfo extends plugin implements plugin_with_menuitems, plugin_with_co
             ],
             'pickerType' => $pickertype,
             'acceptedTypes' => $acceptedtypes,
+            'overrideDefaultFileAttachmentFeature' => (bool) get_config(
+                'tiny_fileimport',
+                'overridedefaultfileattachmentfeature'
+            ),
         ];
     }
 

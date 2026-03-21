@@ -12,6 +12,7 @@ import {pluginName} from './common';
 const permissionsName = getPluginOptionName(pluginName, 'permissions');
 const pickerTypeName = getPluginOptionName(pluginName, 'pickerType');
 const acceptedTypesName = getPluginOptionName(pluginName, 'acceptedTypes');
+const overrideDefaultFileAttachmentFeatureName = getPluginOptionName(pluginName, 'overrideDefaultFileAttachmentFeature');
 
 export const register = (editor) => {
     const registerOption = editor.options.register;
@@ -31,6 +32,11 @@ export const register = (editor) => {
     registerOption(acceptedTypesName, {
         processor: 'array',
         "default": [],
+    });
+
+    registerOption(overrideDefaultFileAttachmentFeatureName, {
+        processor: 'boolean',
+        "default": false,
     });
 };
 
@@ -142,3 +148,6 @@ export const getPickerTypeForFile = (editor, file) => {
 };
 
 export const getAcceptedTypes = (editor) => editor.options.get(acceptedTypesName);
+
+export const getOverrideDefaultFileAttachmentFeature = (editor) =>
+    editor.options.get(overrideDefaultFileAttachmentFeatureName);
