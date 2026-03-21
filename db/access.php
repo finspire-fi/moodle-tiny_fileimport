@@ -18,7 +18,8 @@
  * Capabilities for the tiny_fileimport plugin.
  *
  * @package    tiny_fileimport
- * @copyright  2026
+ * @author     Mikko Haiku
+ * @copyright  2026 Finspire <info@finspi.re>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 

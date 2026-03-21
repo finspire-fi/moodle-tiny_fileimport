@@ -26,7 +26,8 @@ use editor_tiny\plugin_with_menuitems;
  * Tiny fileimport plugin.
  *
  * @package    tiny_fileimport
- * @copyright  2026
+ * @author     Mikko Haiku
+ * @copyright  2026 Finspire <info@finspi.re>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class plugininfo extends plugin implements plugin_with_menuitems, plugin_with_configuration {
