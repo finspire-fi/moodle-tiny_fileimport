@@ -14,13 +14,17 @@ The plugin allows users to:
 ## Features
 
 - Insert menu item: **File import**
-- Modal-based file upload UI
-- Direct editor drag-and-drop upload
+- Modal-based upload UI with drag-and-drop and click-to-browse
+- Direct editor drag-and-drop support
 - Automatic link insertion (`<a href="...">filename</a>`)
-- Per-file picker type selection based on `accepted_types`
-  - Supports common patterns like `.pdf`, `*.pdf`, `application/*`, and `document`
-- Default allowed types come from the same source as **Site administration > Server > File types** (`admin/tool/filetypes`)
-- Admin checkbox to allow `*` (all file types)
+- Smart per-file picker selection based on `accepted_types`
+  - Supports common patterns such as `.pdf`, `*.pdf`, `application/*`, and `document`
+- File type policy driven by admin settings
+  - Default source: **Site administration > Server > File types** (`admin/tool/filetypes`)
+  - Optional override list of allowed extensions
+  - Optional allow-all mode (`*`)
+- Optional override for Tiny default attachment handling during editor drag-and-drop
+- Clean user-facing message for unsupported file types (instead of raw `invalidfiletype` exception output)
 - Works with Moodle Tiny plugin architecture (`plugin_with_menuitems`, `plugin_with_configuration`)
 
 ---
@@ -32,19 +36,9 @@ The plugin allows users to:
 
 ---
 
-## Plugin Location
-
-Place the plugin in:
-
-`lib/editor/tiny/plugins/fileimport`
-
-Expected component name:
-
-`tiny_fileimport`
-
 ## Configuration & Behavior
 
-### Admin setting
+### Admin settings
 
 Navigate to plugin settings and configure:
 
@@ -52,19 +46,32 @@ Navigate to plugin settings and configure:
 - `Override default file attachment feature` (`tiny_fileimport/overridedefaultfileattachmentfeature`)
 - `Allowed file extensions override` (`tiny_fileimport/allowedextensionsoverride`)
 
-Behavior:
+### File type policy precedence
 
-- If `Allow all file types` is enabled: plugin uses `*` (no extension restriction at plugin level)
-- Else if `Allowed file extensions override` is non-empty: plugin uses that override list
-- Else (default): plugin allows all file extensions currently listed in `admin/tool/filetypes`
-- If `Override default file attachment feature` is enabled: direct editor drag-and-drop is always handled by this plugin
-- If `Override default file attachment feature` is disabled: Tiny keeps its native drag-and-drop upload behavior for files it supports, such as images, and this plugin takes over only for files the native editor upload flow does not handle
+File type restrictions are resolved in this order:
 
-Override format:
+1. If `Allow all file types` is enabled, plugin uses `*` (no plugin-level extension restriction)
+2. Else, if `Allowed file extensions override` is non-empty, plugin uses that list
+3. Else, plugin uses all file extensions listed in `admin/tool/filetypes`
+
+### Extension override format
 
 - Comma, space, or newline separated extensions
 - Examples: `pdf, docx, xlsx, zip` or one per line
 - Dot prefix is optional (`pdf` and `.pdf` are both accepted)
+
+### Editor drag-and-drop behavior
+
+- If `Override default file attachment feature` is enabled:
+  - direct editor drag-and-drop is handled by this plugin
+- If `Override default file attachment feature` is disabled:
+  - Tiny keeps native drag-and-drop handling for files it supports (for example images)
+  - this plugin is used only when native editor upload flow does not handle the dropped file(s)
+
+### Upload error behavior
+
+- Unsupported file types show a clean, localized message: **File type not supported**
+- Other upload failures continue to use Moodle exception handling
 
 ### Menu registration
 
