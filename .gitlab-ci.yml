@@ -7,7 +7,20 @@ phpcs_moodle:
   variables:
     COMPOSER_ALLOW_SUPERUSER: "1"
   before_script:
-    - composer config --no-plugins allow-plugins.dealerdirect/phpcodesniffer-composer-installer true
-    - composer require --no-interaction --no-progress --dev moodlehq/moodle-cs
+    - |
+      cat > composer.json <<'JSON'
+      {
+        "name": "local/tiny-fileimport-ci",
+        "require-dev": {
+          "moodlehq/moodle-cs": "^3.14"
+        },
+        "config": {
+          "allow-plugins": {
+            "dealerdirect/phpcodesniffer-composer-installer": true
+          }
+        }
+      }
+      JSON
+    - composer install --no-interaction --no-progress
   script:
     - vendor/bin/phpcs --standard=Moodle --extensions=php --ignore=vendor/* .
