@@ -30,8 +30,7 @@ use editor_tiny\plugin_with_menuitems;
  * @copyright  2026 Finspire <info@finspi.re>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class plugininfo extends plugin implements plugin_with_menuitems, plugin_with_configuration {
-
+class plugininfo extends plugin implements plugin_with_configuration, plugin_with_menuitems {
     #[\Override]
     public static function is_enabled(
         context $context,
@@ -42,12 +41,26 @@ class plugininfo extends plugin implements plugin_with_menuitems, plugin_with_co
         return true;
     }
 
+    /**
+     * Return TinyMCE menu items provided by this plugin.
+     *
+     * @return array
+     */
     public static function get_available_menuitems(): array {
         return [
             'tiny_fileimport/fileimport',
         ];
     }
 
+    /**
+     * Return plugin configuration for the current editor context.
+     *
+     * @param context $context
+     * @param array $options
+     * @param array $fpoptions
+     * @param editor|null $editor
+     * @return array
+     */
     public static function get_plugin_configuration_for_context(
         context $context,
         array $options,
@@ -103,11 +116,11 @@ class plugininfo extends plugin implements plugin_with_menuitems, plugin_with_co
         }
 
         $extensions = array_keys(get_mimetypes_array());
-        $extensions = array_filter($extensions, static function(string $extension): bool {
+        $extensions = array_filter($extensions, static function (string $extension): bool {
             return (bool) preg_match('/^[a-z0-9]+$/i', $extension);
         });
 
-        return array_values(array_map(static function(string $extension): string {
+        return array_values(array_map(static function (string $extension): string {
             return '.' . strtolower($extension);
         }, $extensions));
     }
@@ -124,16 +137,16 @@ class plugininfo extends plugin implements plugin_with_menuitems, plugin_with_co
         }
 
         $tokens = preg_split('/[\s,;]+/', $raw) ?: [];
-        $tokens = array_filter($tokens, static function(string $value): bool {
+        $tokens = array_filter($tokens, static function (string $value): bool {
             return $value !== '';
         });
 
-        $extensions = array_map(static function(string $value): string {
+        $extensions = array_map(static function (string $value): string {
             $normalized = ltrim(strtolower(trim($value)), '.');
             return '.' . $normalized;
         }, $tokens);
 
-        $extensions = array_filter($extensions, static function(string $extension): bool {
+        $extensions = array_filter($extensions, static function (string $extension): bool {
             return (bool) preg_match('/^\.[a-z0-9]+$/', $extension);
         });
 
