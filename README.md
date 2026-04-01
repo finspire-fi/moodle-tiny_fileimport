@@ -119,10 +119,4 @@ Before each upload, the plugin applies the configured accepted types to the sele
 
 - Upload processing uses Moodle’s repository upload endpoint and session validation.
 - Allowed file types are governed by Moodle file picker configuration (`accepted_types`) and context options.
-- Keep Moodle and plugin code updated.
 
----
-
-## License
-
-GNU GPL v3 or later (consistent with Moodle plugin conventions).

@@ -1,0 +1,13 @@
+stages:
+  - lint
+
+phpcs_moodle:
+  stage: lint
+  image: composer:2
+  variables:
+    COMPOSER_ALLOW_SUPERUSER: "1"
+  before_script:
+    - composer config --no-plugins allow-plugins.dealerdirect/phpcodesniffer-composer-installer true
+    - composer require --no-interaction --no-progress --dev moodlehq/moodle-cs
+  script:
+    - vendor/bin/phpcs --standard=Moodle --extensions=php --ignore=vendor/* .
