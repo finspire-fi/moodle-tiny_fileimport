@@ -93,6 +93,7 @@ const uploadAndInsert = async(editor, files) => {
         return;
     }
 
+    const acceptedTypesKey = 'accepted_types';
     const configuredAcceptedTypes = getAcceptedTypes(editor);
     const uploadedFiles = [];
 
@@ -102,11 +103,14 @@ const uploadAndInsert = async(editor, files) => {
             const filepickers = editor.options.get(FILEPICKERS_OPTION_NAME) || {};
 
             if (filepickers[pickerType] && configuredAcceptedTypes?.length) {
-                filepickers[pickerType].accepted_types = configuredAcceptedTypes;
+                filepickers[pickerType] = {
+                    ...filepickers[pickerType],
+                    [acceptedTypesKey]: configuredAcceptedTypes,
+                };
                 editor.options.set(FILEPICKERS_OPTION_NAME, filepickers);
             }
 
-            const url = await uploadFile(editor, pickerType, file, file.name, () => {});
+            const url = await uploadFile(editor, pickerType, file, file.name, () => null);
             uploadedFiles.push({name: file.name, url});
         } catch (error) {
             // Check if error is due to unsupported file type
