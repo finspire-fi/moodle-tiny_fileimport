@@ -35,5 +35,5 @@ $string['allowedextensionsoverride'] = 'Allowed file extensions override';
 $string['allowedextensionsoverride_desc'] = 'Optional. Comma, space, or newline separated list of extensions to allow (for example: pdf, docx, xlsx, zip). If empty, the plugin uses the full list from Site administration > Server > File types. Ignored when "Allow all file types" is enabled.';
 $string['filetypenotsupported'] = 'File type not supported';
 $string['filetypenotsupported_desc'] = 'The file \"{$a}\" could not be uploaded because its file type is not supported by the current settings.';
-$string['tiny/fileimport:use'] = 'Use Tiny file import';
+$string['fileimport:use'] = 'Use Tiny file import';
 $string['privacy:metadata'] = 'The Tiny file import plugin does not store any personal data.';
