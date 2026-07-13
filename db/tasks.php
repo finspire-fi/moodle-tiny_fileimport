@@ -15,7 +15,7 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * Tiny fileimport plugin version details.
+ * Scheduled tasks for the Tiny file import plugin.
  *
  * @package    tiny_fileimport
  * @author     Mikko Haiku
@@ -25,7 +25,14 @@
 
 defined('MOODLE_INTERNAL') || die();
 
-$plugin->version   = 2026071300;
-$plugin->release   = '1.1.0';
-$plugin->requires  = 2024100700;
-$plugin->component = 'tiny_fileimport';
+$tasks = [
+    [
+        'classname' => 'tiny_fileimport\task\validate_license',
+        'blocking' => 0,
+        'minute' => 0,
+        'hour' => 2,
+        'day' => '*',
+        'dayofweek' => 0,  // Sunday
+        'month' => '*',
+    ],
+];
