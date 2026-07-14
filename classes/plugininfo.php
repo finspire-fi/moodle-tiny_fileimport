@@ -55,6 +55,11 @@ class plugininfo extends plugin implements plugin_with_configuration, plugin_wit
     /**
      * Return plugin configuration for the current editor context.
      *
+     * Until the license has been validated successfully, the configured
+     * overrides (allowed types, extension override, default upload override)
+     * are ignored and the plugin behaves as if it was never customised,
+     * rather than exposing a previously saved configuration.
+     *
      * @param context $context
      * @param array $options
      * @param array $fpoptions
@@ -80,8 +85,10 @@ class plugininfo extends plugin implements plugin_with_configuration, plugin_wit
             }
         }
 
-        $allowalltypes = (bool) get_config('tiny_fileimport', 'allowalltypes');
-        $overrideextensions = self::get_configured_allowed_extensions_override();
+        $licensevalid = self::is_license_valid();
+
+        $allowalltypes = $licensevalid && (bool) get_config('tiny_fileimport', 'allowalltypes');
+        $overrideextensions = $licensevalid ? self::get_configured_allowed_extensions_override() : [];
         $acceptedtypes = ['*'];
 
         if (!$allowalltypes) {
@@ -98,11 +105,28 @@ class plugininfo extends plugin implements plugin_with_configuration, plugin_wit
             ],
             'pickerType' => $pickertype,
             'acceptedTypes' => $acceptedtypes,
-            'overrideDefaultFileAttachmentFeature' => (bool) get_config(
+            'overrideDefaultFileAttachmentFeature' => $licensevalid && (bool) get_config(
                 'tiny_fileimport',
                 'overridedefaultfileattachmentfeature'
             ),
         ];
+    }
+
+    /**
+     * Whether the plugin's license has been validated successfully.
+     *
+     * @return bool
+     */
+    private static function is_license_valid(): bool {
+        $error = get_config('tiny_fileimport', 'license_validation_error');
+        $data = get_config('tiny_fileimport', 'license_validation_data');
+
+        if (!empty($error) || empty($data)) {
+            return false;
+        }
+
+        $decoded = json_decode($data, true);
+        return !empty($decoded['valid']);
     }
 
     /**
