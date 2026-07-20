@@ -69,7 +69,7 @@ if ($ADMIN->fulltree) {
         PARAM_RAW_TRIMMED
     ));
 
-    // Licensing settings
+    // Licensing settings.
     $settings->add(new admin_setting_heading(
         'tiny_fileimport/licensingheading',
         get_string('licensingheading', 'tiny_fileimport'),
@@ -85,7 +85,7 @@ if ($ADMIN->fulltree) {
     );
     // Validate immediately whenever the license key is changed and saved, rather
     // than waiting for the next scheduled run.
-    $licensekeysetting->set_updatedcallback(static function() {
+    $licensekeysetting->set_updatedcallback(static function () {
         core_php_time_limit::raise(60);
         ob_start();
         (new \tiny_fileimport\task\validate_license())->execute();
@@ -93,36 +93,37 @@ if ($ADMIN->fulltree) {
     });
     $settings->add($licensekeysetting);
 
-    // License validation information (read-only)
-    $validationData = get_config('tiny_fileimport', 'license_validation_data');
-    $lastChecked = get_config('tiny_fileimport', 'license_last_checked');
-    $validationError = get_config('tiny_fileimport', 'license_validation_error');
+    // License validation information (read-only).
+    $validationdata = get_config('tiny_fileimport', 'license_validation_data');
+    $lastchecked = get_config('tiny_fileimport', 'license_last_checked');
+    $validationerror = get_config('tiny_fileimport', 'license_validation_error');
 
-    $infoText = '';
-    if ($validationError) {
-        $infoText = get_string('validation_error', 'tiny_fileimport') . ': ' . $validationError;
-    } elseif ($validationData) {
-        $data = json_decode($validationData, true);
+    $infotext = '';
+    if ($validationerror) {
+        $infotext = get_string('validation_error', 'tiny_fileimport') . ': ' . $validationerror;
+    } else if ($validationdata) {
+        $data = json_decode($validationdata, true);
         $status = $data['status'] ?? 'unknown';
         $valid = $data['valid'] ?? false;
-        $expiresAt = $data['expires_at'] ?? null;
+        $expiresat = $data['expires_at'] ?? null;
 
-        $infoText = get_string('license_status', 'tiny_fileimport') . ': ' . $status . "<br>";
-        $infoText .= get_string('license_valid', 'tiny_fileimport') . ': ' . ($valid ? get_string('yes') : get_string('no')) . "<br>";
-        if ($expiresAt) {
-            $infoText .= get_string('license_expires', 'tiny_fileimport') . ': ' . date('Y-m-d', $expiresAt) . "<br>";
+        $infotext = get_string('license_status', 'tiny_fileimport') . ': ' . $status . "<br>";
+        $yesno = $valid ? get_string('yes') : get_string('no');
+        $infotext .= get_string('license_valid', 'tiny_fileimport') . ': ' . $yesno . "<br>";
+        if ($expiresat) {
+            $infotext .= get_string('license_expires', 'tiny_fileimport') . ': ' . date('Y-m-d', $expiresat) . "<br>";
         }
     }
 
-    if ($lastChecked) {
-        $infoText .= "<br>" . get_string('last_validated', 'tiny_fileimport') . ': ' . date('Y-m-d H:i:s', $lastChecked);
+    if ($lastchecked) {
+        $infotext .= "<br>" . get_string('last_validated', 'tiny_fileimport') . ': ' . date('Y-m-d H:i:s', $lastchecked);
     }
 
-    if (trim($infoText)) {
+    if (trim($infotext)) {
         $settings->add(new admin_setting_heading(
             'tiny_fileimport/validation_info',
             get_string('license_validation_info', 'tiny_fileimport'),
-            $infoText
+            $infotext
         ));
     }
 }

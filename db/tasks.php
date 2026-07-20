@@ -32,7 +32,7 @@ $tasks = [
         'minute' => 'R',
         'hour' => 'R',
         'day' => '*',
-        'dayofweek' => 0,  // Sunday
+        'dayofweek' => 0, // Sunday.
         'month' => '*',
     ],
 ];
